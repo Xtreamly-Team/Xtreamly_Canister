@@ -1,0 +1,4 @@
+[workspace]
+members = [
+    "src/Xtreamly_Canister_backend",
+]
