@@ -5,15 +5,6 @@
       "type": "rust",
       "package": "Xtreamly_Canister_backend",
       "candid": "src/Xtreamly_Canister_backend/Xtreamly_Canister_backend.did"
-    },
-    "Xtreamly_Canister_frontend": {
-      "type": "assets",
-      "source": [
-        "src/Xtreamly_Canister_frontend/assets"
-      ],
-      "dependencies": [
-        "Xtreamly_Canister_backend"
-      ]
     }
   },
   "defaults": {
