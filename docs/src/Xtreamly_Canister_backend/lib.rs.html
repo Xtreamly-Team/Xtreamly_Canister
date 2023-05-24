@@ -194,6 +194,15 @@
 <a href="#194" id="194">194</a>
 <a href="#195" id="195">195</a>
 <a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::cell::RefCell;
 <span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::rc::Rc;
@@ -223,7 +232,9 @@
 }
 
 
-<span class="attr">#[update]
+
+<span class="doccomment">/// create a new proxy account using a real publickey
+</span><span class="attr">#[update]
 </span><span class="kw">pub async fn </span>create_new_proxy_account(actual_public_key: String) -&gt; String {
     <span class="kw">let </span>random_path = create_random_derive().<span class="kw">await</span>;
     <span class="kw">let </span>token = create_random_string().<span class="kw">await</span>;
@@ -238,7 +249,9 @@
 
 }
 
-<span class="attr">#[update]
+
+<span class="doccomment">/// remove a proxy account that is not being used anymore using the token that controls the proxy account
+</span><span class="attr">#[update]
 </span><span class="kw">pub async fn </span>remove_proxy_account(proxy_account_token: String) -&gt; bool {
     <span class="kw">let </span>proxy_account =    PROXY_ACCOUNT_HOLDER.with(|map: <span class="kw-2">&amp;</span>RefCell&lt;HashMap&lt;String, KeyHolder&gt;&gt;| (<span class="kw-2">*</span>map).borrow_mut().remove(<span class="kw-2">&amp;</span>proxy_account_token ));
     <span class="kw">match </span>proxy_account {
@@ -251,7 +264,9 @@
     }
 }
 
-<span class="attr">#[ update]
+
+<span class="doccomment">/// use Rhia language to execute a script using your proxy account
+</span><span class="attr">#[ update]
 </span><span class="kw">pub async fn </span>execute_script(token: String , stage1_script : String, stage2_string : String ) -&gt; String {
     <span class="kw">let </span>stage1_commands: Rc&lt;RefCell&lt;Vec&lt;Command&gt;&gt;&gt; = Rc::new(RefCell::new(Vec::new()));
     <span class="kw">let </span>stage2_commands: Rc&lt;RefCell&lt;Vec&lt;Command&gt;&gt;&gt; = Rc::new(RefCell::new(Vec::new()));
@@ -382,7 +397,10 @@
     <span class="kw">return  </span><span class="bool-val">true
 </span>}
 
-<span class="attr">#[update]
+
+
+<span class="doccomment">/// read a verifiable credential according to the rules, using the dapp public key and proxy account address
+</span><span class="attr">#[update]
 </span><span class="kw">pub async fn </span>get_vc(did: String , dapp_publickey :String , proxy_publickey : String) -&gt; String {
     <span class="kw">let </span>contract_address =  DID_ADDRESS_MAP.with(|map: <span class="kw-2">&amp;</span>RefCell&lt;HashMap&lt;String, String&gt;&gt;| (<span class="kw-2">*</span>map).borrow().get(<span class="kw-2">&amp;</span>did.clone()).cloned()).unwrap().to_owned();
     <span class="kw">let </span>encrypted_data = read_vc_data(contract_address).<span class="kw">await</span>;
