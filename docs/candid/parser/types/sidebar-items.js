@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Dec","FuncMode","IDLType","PrimType"],"fn":["to_pretty"],"struct":["Binding","FuncType","IDLProg","IDLTypes","TypeField"],"trait":["ToDoc"]};

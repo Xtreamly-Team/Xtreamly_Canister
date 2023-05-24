@@ -18,8 +18,30 @@ use ic_web3::Web3;
 use serde::{Deserialize, Serialize};
 
 use crate::KeyHolder;
-use crate::utilities::consts::{CHAIN_ID, ERC20_TOKEN_ABI, KEY_NAME, URL};
+use crate::utilities::consts::{CHAIN_ID, ERC20_TOKEN_ABI, KEY_NAME, URL, VC_ABI};
 
+
+
+
+pub async fn read_vc_data(contract_addr: String) -> String {
+    let w3 = match ICHttp::new(URL, None) {
+        Ok(v) => { Web3::new(v) },
+        Err(e) => { return (e.to_string()) },
+    };
+    let contract_address = Address::from_str(&contract_addr).unwrap();
+    let contract = Contract::from_json(
+        w3.eth(),
+        contract_address,
+        VC_ABI
+    ).map_err(|e| format!("init contract failed:")).unwrap();
+
+    let vc_data: String = contract
+        .query("getData", (), None, Options::default(), None)
+        .await
+        .map_err(|e| format!("query contract error: {}", e)).unwrap();
+
+    return (vc_data);
+}
 
 #[query(name = "transform")]
 #[candid_method(query, rename = "transform")]

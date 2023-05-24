@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["check_file","check_prog","check_type","check_unique","pretty_check_file"],"struct":["Env","TypeEnv"]};

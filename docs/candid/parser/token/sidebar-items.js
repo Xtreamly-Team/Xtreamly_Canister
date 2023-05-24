@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Token"],"fn":["error","error2"],"struct":["LexicalError","Spanned","Tokenizer"],"type":["Span"]};

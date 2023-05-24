@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["RecoveryError","SigningError"],"fn":["hash_message","keccak256"],"struct":["Signature"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["HttpMethod"],"fn":["http_request","http_request_with_cycles"],"struct":["CanisterHttpRequestArgument","HttpHeader","HttpResponse","TransformArgs","TransformContext","TransformFunc"]};

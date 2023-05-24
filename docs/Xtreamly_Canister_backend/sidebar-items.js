@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_new_proxy_account","create_vc_self_presented","execute_script","get_vc","present_did_address","remove_proxy_account"]};

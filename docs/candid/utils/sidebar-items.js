@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["CandidSource"],"fn":["decode_args","decode_one","encode_args","encode_one","service_compatible","write_args"],"trait":["ArgumentDecoder","ArgumentEncoder"]};

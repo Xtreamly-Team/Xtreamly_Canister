@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Label","Type"],"fn":["get_type","is_primitive","unroll"],"struct":["Field","Function","TypeContainer","TypeId"]};

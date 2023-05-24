@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":["internal","number","principal","reference","reserved","subtype"],"trait":["CandidType","Compound","Serializer"]};

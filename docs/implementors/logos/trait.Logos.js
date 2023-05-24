@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"candid":[["impl&lt;'s&gt; <a class=\"trait\" href=\"logos/trait.Logos.html\" title=\"trait logos::Logos\">Logos</a>&lt;'s&gt; for <a class=\"enum\" href=\"candid/parser/token/enum.Token.html\" title=\"enum candid::parser::token::Token\">Token</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

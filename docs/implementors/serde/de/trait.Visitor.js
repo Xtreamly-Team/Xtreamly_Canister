@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"candid":[["impl&lt;'de&gt; <a class=\"trait\" href=\"serde/de/trait.Visitor.html\" title=\"trait serde::de::Visitor\">Visitor</a>&lt;'de&gt; for <a class=\"struct\" href=\"candid/types/reference/struct.FuncVisitor.html\" title=\"struct candid::types::reference::FuncVisitor\">FuncVisitor</a>"],["impl&lt;'de&gt; <a class=\"trait\" href=\"serde/de/trait.Visitor.html\" title=\"trait serde::de::Visitor\">Visitor</a>&lt;'de&gt; for <a class=\"struct\" href=\"candid/parser/value/struct.IDLValueVisitor.html\" title=\"struct candid::parser::value::IDLValueVisitor\">IDLValueVisitor</a>"]],
+"serde":[]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()
