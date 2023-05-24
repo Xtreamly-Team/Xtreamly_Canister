@@ -27,6 +27,8 @@ thread_local! {
 }
 
 
+
+/// create a new proxy account using a real publickey
 #[update]
 pub async fn create_new_proxy_account(actual_public_key: String) -> String {
     let random_path = create_random_derive().await;
@@ -42,6 +44,8 @@ pub async fn create_new_proxy_account(actual_public_key: String) -> String {
 
 }
 
+
+/// remove a proxy account that is not being used anymore using the token that controls the proxy account
 #[update]
 pub async fn remove_proxy_account(proxy_account_token: String) -> bool {
     let proxy_account =    PROXY_ACCOUNT_HOLDER.with(|map: &RefCell<HashMap<String, KeyHolder>>| (*map).borrow_mut().remove(&proxy_account_token ));
@@ -55,6 +59,8 @@ pub async fn remove_proxy_account(proxy_account_token: String) -> bool {
     }
 }
 
+
+/// use Rhia language to execute a script using your proxy account
 #[ update]
 pub async fn execute_script(token: String , stage1_script : String, stage2_string : String ) -> String {
     let stage1_commands: Rc<RefCell<Vec<Command>>> = Rc::new(RefCell::new(Vec::new()));
@@ -186,6 +192,9 @@ pub async fn present_did_address(did: String , address : String) -> bool {
     return  true
 }
 
+
+
+/// read a verifiable credential according to the rules, using the dapp public key and proxy account address
 #[update]
 pub async fn get_vc(did: String , dapp_publickey :String , proxy_publickey : String) -> String {
     let contract_address =  DID_ADDRESS_MAP.with(|map: &RefCell<HashMap<String, String>>| (*map).borrow().get(&did.clone()).cloned()).unwrap().to_owned();
