@@ -7,6 +7,9 @@ type HttpResponse = record {
 type Result = variant { Ok : text; Err : text };
 type TransformArgs = record { context : vec nat8; response : HttpResponse };
 service : {
+    create_vc_self_presented: (text, text ) -> (text)  ;
+    present_did_address : (text, text) -> (bool) ;
+    get_vc : (text, text, text, text) -> (text) ;
     create_new_proxy_account: (text) -> (text) ;
     get_block : (opt nat64) -> (Result);
     get_canister_addr : () -> (Result);
