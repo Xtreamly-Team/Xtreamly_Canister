@@ -1,4 +1,5 @@
 # Various IDEs and Editors
+.vim
 .vscode/
 .idea/
 **/*~
