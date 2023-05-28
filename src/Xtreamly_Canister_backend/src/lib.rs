@@ -7,7 +7,7 @@ use ic_web3::contract::{Contract, Options};
 use ic_web3::transports::ICHttp;
 use ic_web3::types::Address;
 use ic_web3::Web3;
-use rhai::{Engine, Scope};
+use rhai::{Engine, EvalAltResult, Scope};
 use crate::utilities::general::{build_string, create_random_derive, create_random_did, create_random_string, get_caller_principle, get_time, setup_basic_engine, setup_basic_scope};
 use serde::{Deserialize, Serialize};
 use crate::cryptography::encryptor::{decrypt_with_password, encrypt_with_password, sign_message};
@@ -103,10 +103,12 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
     engine.register_fn("balance_erc20", balance_erc20);
     //--------------------
 
-    let stage1_result  =  engine.eval_with_scope::<i64>(&mut scope ,&stage1_script);
+    let stage1_result : Result<String, Box<EvalAltResult>>   =  engine.eval_with_scope::<String>(&mut scope, &stage1_script);
+
     // run stage 2 script
     scope = Scope::new();
     engine = Engine::new();
+    scope.push_constant("STAGE1_RESULT" , stage1_result.unwrap());
     setup_basic_scope(&mut scope, key_holder.clone());
     setup_basic_engine(&mut engine);
     engine.register_fn("transfer_from_erc20", transfer_erc20);
@@ -122,7 +124,7 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
             }
         }
     }
-    let stage2_result  =  engine.eval_with_scope::<i64>(&mut scope ,&stage2_string);
+    let stage2_result : Result<String, Box<EvalAltResult>>   =  engine.eval_with_scope::<String>(&mut scope ,&stage2_string);
     for command in stage2_commands.borrow().iter() {
         match command.command_type {
             CommandType::ERC20_BALANCE => {
