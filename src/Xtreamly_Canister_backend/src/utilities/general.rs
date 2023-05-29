@@ -36,7 +36,7 @@ pub fn setup_basic_engine(engine: &mut Engine) {
       engine.register_fn("print_to_icp", print_to_icp);
 }
 pub fn setup_basic_scope(scope: &mut Scope, key_holder : KeyHolder) {
-      scope.push_constant("MY_PROXY_ACCOUNT", (serde_json::to_string(&key_holder).unwrap()));
+      scope.push_constant("MY_PROXY_ACCOUNT",  base64::encode((serde_json::to_string(&key_holder).unwrap())));
       scope.push_constant("MY_PROXY_ADDRESS", key_holder.clone().proxy_publickey);
       scope.push_constant("MY_REAL_ADDRESS", key_holder.clone().actual_publickey);
 }

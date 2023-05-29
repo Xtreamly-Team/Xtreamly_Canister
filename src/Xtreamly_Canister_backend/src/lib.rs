@@ -81,7 +81,7 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
     let transfer_erc20 = {
         {
             let commands = stage2_commands.clone();
-            move | contract_address : String  ,from: String, to: String , amount : u64 , proxy_account : String| {
+            move | contract_address : String  ,from: String, to: String , amount : i64 , proxy_account : String| {
                 let command = Command {
                     command_type: CommandType::ERC20_TOKEN_TRANSFER_FROM,
                     args: build_string(vec![ contract_address , ",".to_owned() , from , ",".to_owned(), to , ",".to_owned(), amount.to_string() , ",".to_owned(),proxy_account ]),

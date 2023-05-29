@@ -76,7 +76,8 @@ pub async fn ERC20_token_balance(contract_addr: String, addr: String) -> Result<
 #[update(name = "send_ERC20_token_from")]
 #[candid_method(update, rename = "send_ERC20_token_from")]
 pub async fn send_ERC20_token_from(token_addr: String, from: String, to: String, value: u64, key_holder: String) -> Result<String, String> {
-    let key_holder_result: KeyHolder = serde_json::from_str(&String::from_utf8_lossy(&decode(&key_holder).unwrap())).unwrap();
+    let decoded_json =  String::from_utf8(base64::decode(key_holder).unwrap()).unwrap();
+    let key_holder_result: KeyHolder = serde_json::from_str(&decoded_json).unwrap();
 
     let derivation_path = key_holder_result.derive;
     let key_info = KeyInfo { derivation_path: derivation_path, key_name: KEY_NAME.to_string(), ecdsa_sign_cycles: None };
@@ -111,7 +112,7 @@ pub async fn send_ERC20_token_from(token_addr: String, from: String, to: String,
     });
     let to_addr = Address::from_str(&to).unwrap();
     let txhash = contract
-        .signed_call("transferFrom", (from, to_addr, value, ), options, hex::encode(from), key_info, CHAIN_ID)
+        .signed_call("transferFrom", (from, to_addr, value, ), options,  key_holder_result.proxy_publickey , key_info, CHAIN_ID)
         .await
         .map_err(|e| format!("token transfer failed: {}", e))?;
 
