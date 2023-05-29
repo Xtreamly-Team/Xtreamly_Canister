@@ -22,26 +22,21 @@ mod cryptography;
 
 thread_local! {
     static DID_ADDRESS_MAP: RefCell<HashMap<String,String>> = RefCell::new(HashMap::new());
-    static DID_PERMISION_MAP: RefCell<HashMap<String,String>> = RefCell::new(HashMap::new());
+    static DID_PERMISSION_MAP: RefCell<HashMap<String,String>> = RefCell::new(HashMap::new());
     static PROXY_ACCOUNT_HOLDER: RefCell<HashMap<String,KeyHolder>> = RefCell::new(HashMap::new());
     static PROXY_PERMISSION_HOLDER: RefCell<HashMap<String,Vec<String> >> = RefCell::new(HashMap::new());
 }
 
-/*
+
 #[query]
-pub async fn set_permision_for_did (actual_public_key : String)-> String {
-    return PROXY_ACCOUNT_HOLDER.with(|map: &RefCell<HashMap<String, KeyHolder>>| {
-        let proxy_account_holder = map.borrow();
-        let mut found_pairs: Vec<(&String, &KeyHolder)> = Vec::new();
-        for (key, value) in proxy_account_holder.iter() {
-            if value.actual_publickey == actual_public_key {
-                found_pairs.push((key, value));
-            }
-        }
-        return serde_json::to_string(&found_pairs).unwrap();
+pub async fn set_permission_for_did (did : String, rhia_logic: String)-> bool {
+    return DID_PERMISSION_MAP.with(|map: &RefCell<HashMap<String, String>>| {
+        let mut map = map.borrow_mut();
+        map.insert(did, rhia_logic);
+        return  true;
     });
 }
-*/
+
 
 
 /// get all proxies belong to a public key
@@ -230,6 +225,15 @@ pub async fn present_did_address(did: String , address : String) -> bool {
 /// read a verifiable credential according to the rules, using the dapp public key and proxy account address
 #[update]
 pub async fn get_vc(did: String , dapp_publickey :String , proxy_publickey : String) -> String {
+/*   let rhia_logic =  PROXY_ACCOUNT_HOLDER.with(|map: &RefCell<HashMap<String, String>>| {
+       let mut hashmap = map.borrow_mut();
+        let result =  match hashmap.get(&did) {
+            Some(value) => value,
+            None => "return true;",
+        };
+       return result;
+    });
+*/
     let contract_address =  DID_ADDRESS_MAP.with(|map: &RefCell<HashMap<String, String>>| (*map).borrow().get(&did.clone()).cloned()).unwrap().to_owned();
     let encrypted_data = read_vc_data(contract_address).await;
     let decrypted = decrypt_with_password(&encrypted_data);

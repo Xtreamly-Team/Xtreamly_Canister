@@ -37,6 +37,14 @@ pub fn setup_basic_engine(engine: &mut Engine) {
       engine.register_fn("print_to_icp", print_to_icp);
       engine.register_fn("time", icp_time);
 }
+pub fn setup_permission_engine(engine: &mut Engine){
+
+      engine.register_fn("print_to_icp", print_to_icp);
+      engine.register_fn("time", icp_time);
+}
+pub fn setup_permission_scope(scope: &mut Scope, dapp : String , ) {
+      scope.push_constant("DAPP",  dapp);
+}
 pub fn setup_basic_scope(scope: &mut Scope, key_holder : KeyHolder) {
       scope.push_constant("MY_PROXY_ACCOUNT",  base64::encode((serde_json::to_string(&key_holder).unwrap())));
       scope.push_constant("MY_PROXY_ADDRESS", key_holder.clone().proxy_publickey);
