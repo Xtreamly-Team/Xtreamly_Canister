@@ -7,7 +7,7 @@ use ic_cdk::api::management_canister::ecdsa::{EcdsaCurve, EcdsaKeyId, sign_with_
 use rhai::{Engine, Scope};
 use sha2::{Digest, Sha256};
 use crate::models::entities::KeyHolder;
-use crate::utilities::rhia_delegation::print_to_icp;
+use crate::utilities::rhia_delegation::{icp_time, print_to_icp};
 
 
 pub async fn create_random_string() -> String {
@@ -33,7 +33,9 @@ pub fn build_string( stringv : Vec<String>) -> String {
        return result;
 }
 pub fn setup_basic_engine(engine: &mut Engine) {
+
       engine.register_fn("print_to_icp", print_to_icp);
+      engine.register_fn("time", icp_time);
 }
 pub fn setup_basic_scope(scope: &mut Scope, key_holder : KeyHolder) {
       scope.push_constant("MY_PROXY_ACCOUNT",  base64::encode((serde_json::to_string(&key_holder).unwrap())));

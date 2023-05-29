@@ -22,9 +22,26 @@ mod cryptography;
 
 thread_local! {
     static DID_ADDRESS_MAP: RefCell<HashMap<String,String>> = RefCell::new(HashMap::new());
+    static DID_PERMISION_MAP: RefCell<HashMap<String,String>> = RefCell::new(HashMap::new());
     static PROXY_ACCOUNT_HOLDER: RefCell<HashMap<String,KeyHolder>> = RefCell::new(HashMap::new());
     static PROXY_PERMISSION_HOLDER: RefCell<HashMap<String,Vec<String> >> = RefCell::new(HashMap::new());
 }
+
+/*
+#[query]
+pub async fn set_permision_for_did (actual_public_key : String)-> String {
+    return PROXY_ACCOUNT_HOLDER.with(|map: &RefCell<HashMap<String, KeyHolder>>| {
+        let proxy_account_holder = map.borrow();
+        let mut found_pairs: Vec<(&String, &KeyHolder)> = Vec::new();
+        for (key, value) in proxy_account_holder.iter() {
+            if value.actual_publickey == actual_public_key {
+                found_pairs.push((key, value));
+            }
+        }
+        return serde_json::to_string(&found_pairs).unwrap();
+    });
+}
+*/
 
 
 /// get all proxies belong to a public key
