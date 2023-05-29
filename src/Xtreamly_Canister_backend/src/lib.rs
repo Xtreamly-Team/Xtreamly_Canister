@@ -27,7 +27,7 @@ thread_local! {
 }
 
 
-
+/// get all proxies belong to a public key
 #[query]
 pub async fn get_proxies(actual_public_key : String)-> String {
     return PROXY_ACCOUNT_HOLDER.with(|map: &RefCell<HashMap<String, KeyHolder>>| {
