@@ -35,6 +35,16 @@ print("token: " + token)
 
 print("proxy: " + proxy)
 
+
+params = [
+	{'type': Types.Text, 'value': '5d76327e438eaf3a7c7a0a24edc4019d1b8148a1'},
+]
+
+name = agent.query_raw("be2us-64aaa-aaaaa-qaabq-cai", "get_proxies", encode(params))
+
+
+print(name)
+
 params = [
 	{'type': Types.Text, 'value': token},
     {'type': Types.Text, 'value': """
