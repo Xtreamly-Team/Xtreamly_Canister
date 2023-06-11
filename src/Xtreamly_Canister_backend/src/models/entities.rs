@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use ic_cdk::export::candid::CandidType;
 
 
+
 #[derive(Serialize, Deserialize)]
 pub struct Credential {
     pub(crate) data: String,
@@ -71,6 +72,10 @@ pub struct Command {
     pub(crate) extra: String
 }
 
+
+
+
+//Proxy account entities
 #[derive(Clone)]
 #[derive(Serialize, Deserialize)]
 pub struct KeyHolder {
@@ -78,3 +83,14 @@ pub struct KeyHolder {
     pub(crate) proxy_publickey: String,
     pub(crate) actual_publickey: String
 }
+
+#[derive(Clone)]
+#[derive(Serialize, Deserialize)]
+pub  struct ProxyAccount {
+    pub(crate) token : String,
+    pub(crate) key_holder: KeyHolder,
+}
+
+
+
+

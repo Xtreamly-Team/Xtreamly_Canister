@@ -1,5 +1,6 @@
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::future::Future;
 use std::rc::Rc;
 use std::str::FromStr;
 use ic_cdk_macros::{self, update, query};
@@ -13,8 +14,7 @@ use serde::{Deserialize, Serialize};
 use crate::cryptography::encryptor::{decrypt_with_password, encrypt_with_password, sign_message};
 use crate::models::entities::{Command, CommandType, Credential, KeyHolder, Proof, VerifiableCredential, VerificationPresentationType};
 use crate::utilities::consts::{URL, VC_ABI};
-use crate::utilities::web3::{ERC20_token_balance, get_address_with_randomness, read_vc_data, send_ERC20_token_from};
-
+use crate::utilities::web3::{erc20_token_balance, get_address_with_randomness, read_vc_data, send_erc20_token_from};
 mod utilities;
 mod models;
 mod cryptography;
@@ -27,15 +27,6 @@ thread_local! {
     static PROXY_PERMISSION_HOLDER: RefCell<HashMap<String,Vec<String> >> = RefCell::new(HashMap::new());
 }
 
-
-#[query]
-pub async fn set_permission_for_did (did : String, rhia_logic: String)-> bool {
-    return DID_PERMISSION_MAP.with(|map: &RefCell<HashMap<String, String>>| {
-        let mut map = map.borrow_mut();
-        map.insert(did, rhia_logic);
-        return  true;
-    });
-}
 
 
 
@@ -66,8 +57,8 @@ pub async fn create_new_proxy_account(actual_public_key: String) -> String {
         actual_publickey : actual_public_key
     };
     PROXY_ACCOUNT_HOLDER.with(|map: &RefCell<HashMap<String, KeyHolder>>| (*map).borrow_mut().insert(token.clone(),key_holder.clone() ));
-    return  build_string(vec![token,",".to_owned(), public_key]);
 
+    build_string(vec![token,",".to_owned(), public_key])
 }
 
 
@@ -85,7 +76,6 @@ pub async fn remove_proxy_account(proxy_account_token: String) -> bool {
     }
 }
 
-
 /// use Rhia language to execute a script using your proxy account
 #[ update]
 pub async fn execute_script(token: String , stage1_script : String, stage2_string : String ) -> String {
@@ -98,7 +88,7 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
         move | variable_name : String  ,contract_address: String, target_address: String| {
             let command = Command {
                 command_type: CommandType::ERC20_BALANCE,
-                args: build_string(vec![contract_address, ",".to_owned(), target_address]),
+                args: build_string(vec![contract_address, ", ".to_owned(), target_address]),
                 extra: variable_name,
             };
             commands.borrow_mut().push(command);
@@ -110,7 +100,7 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
             move | contract_address : String  ,from: String, to: String , amount : i64 , proxy_account : String| {
                 let command = Command {
                     command_type: CommandType::ERC20_TOKEN_TRANSFER_FROM,
-                    args: build_string(vec![ contract_address , ",".to_owned() , from , ",".to_owned(), to , ",".to_owned(), amount.to_string() , ",".to_owned(),proxy_account ]),
+                    args: build_string(vec![ contract_address , ", ".to_owned() , from , ", ".to_owned(), to , ", ".to_owned(), amount.to_string() , ", ".to_owned(),proxy_account ]),
                     extra: "".to_owned(),
                 };
                 commands.borrow_mut().push(command);
@@ -142,7 +132,7 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
         match command.command_type {
             CommandType::ERC20_BALANCE => {
                 let parts: Vec<&str> = command.args.split(',').collect();
-                let result = ERC20_token_balance(parts[0].parse().unwrap(), parts[1].parse().unwrap()).await.unwrap();
+                let result = erc20_token_balance(parts[0].parse().unwrap(), parts[1].parse().unwrap()).await.unwrap();
                 scope.push_constant(command.clone().extra, result);
             },
             CommandType::ERC20_TOKEN_TRANSFER_FROM => {
@@ -157,7 +147,7 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
             },
             CommandType::ERC20_TOKEN_TRANSFER_FROM => {
                 let parts: Vec<&str> = command.args.split(',').collect();
-                let result = send_ERC20_token_from(parts[0].parse().unwrap(),parts[1].parse().unwrap(), parts[2].parse().unwrap(),parts[3].parse::<u64>().unwrap() , parts[4].parse().unwrap()).await.unwrap();
+                let result = send_erc20_token_from(parts[0].parse().unwrap(), parts[1].parse().unwrap(), parts[2].parse().unwrap(), parts[3].parse::<u64>().unwrap(), parts[4].parse().unwrap()).await.unwrap();
             }
         }
     }
@@ -165,8 +155,6 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
     return  stage2_result.unwrap().to_string();
 
 }
-
-
 
 /// creates  a VC from a claim, sign it with canisters key and send it back to user, it also updates CREATE_VC_CALLBACK as the temporary fix for Metamask snap limitation on calling update methods of the canister
 #[update]
@@ -182,11 +170,11 @@ pub async fn create_vc_self_presented(data: String) -> String {
     let mut vc = VerifiableCredential {
         context: "https://www.w3.org/2018/credentials/v1".to_string(),
         types: "VerifiableCredential".to_string(),
-        issuer: ic_cdk::id(),
-        issuance_date:  time_string.clone(),
-        credential_subject: credential,
-        proof: "".to_string(),
-        verification_presentation : VerificationPresentationType::SELF_PRESENTED
+                                                                  issuer: ic_cdk::id(),
+                                                                  issuance_date:  time_string.clone(),
+                                                                  credential_subject: credential,
+                                                                  proof: "".to_string(),
+                                                                  verification_presentation : VerificationPresentationType::SELF_PRESENTED
     };
     let did = create_random_did().await;
     let mut proof = Proof {
@@ -221,19 +209,9 @@ pub async fn present_did_address(did: String , address : String) -> bool {
 }
 
 
-
 /// read a verifiable credential according to the rules, using the dapp public key and proxy account address
 #[update]
 pub async fn get_vc(did: String , dapp_publickey :String , proxy_publickey : String) -> String {
-/*   let rhia_logic =  PROXY_ACCOUNT_HOLDER.with(|map: &RefCell<HashMap<String, String>>| {
-       let mut hashmap = map.borrow_mut();
-        let result =  match hashmap.get(&did) {
-            Some(value) => value,
-            None => "return true;",
-        };
-       return result;
-    });
-*/
     let contract_address =  DID_ADDRESS_MAP.with(|map: &RefCell<HashMap<String, String>>| (*map).borrow().get(&did.clone()).cloned()).unwrap().to_owned();
     let encrypted_data = read_vc_data(contract_address).await;
     let decrypted = decrypt_with_password(&encrypted_data);

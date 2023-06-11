@@ -50,9 +50,9 @@ fn transform(response: TransformArgs) -> HttpResponse {
 }
 
 // query a contract, token balance
-#[update(name = "ERC20_token_balance")]
-#[candid_method(update, rename = "ERC20_token_balance")]
-pub async fn ERC20_token_balance(contract_addr: String, addr: String) -> Result<String, String> {
+#[update(name = "erc20_token_balance")]
+#[candid_method(update, rename = "erc20_token_balance")]
+pub async fn erc20_token_balance(contract_addr: String, addr: String) -> Result<String, String> {
     let w3 = match ICHttp::new(URL, None) {
         Ok(v) => { Web3::new(v) }
         Err(e) => { return Err(e.to_string()); }
@@ -73,9 +73,9 @@ pub async fn ERC20_token_balance(contract_addr: String, addr: String) -> Result<
 }
 
 // call a contract, transfer some token to addr
-#[update(name = "send_ERC20_token_from")]
-#[candid_method(update, rename = "send_ERC20_token_from")]
-pub async fn send_ERC20_token_from(token_addr: String, from: String, to: String, value: u64, key_holder: String) -> Result<String, String> {
+#[update(name = "send_erc20_token_from")]
+#[candid_method(update, rename = "send_erc20_token_from")]
+pub async fn send_erc20_token_from(token_addr: String, from: String, to: String, value: u64, key_holder: String) -> Result<String, String> {
     let decoded_json =  String::from_utf8(base64::decode(key_holder).unwrap()).unwrap();
     let key_holder_result: KeyHolder = serde_json::from_str(&decoded_json).unwrap();
 
