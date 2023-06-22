@@ -140,6 +140,8 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
             }
         }
     }
+    ic_cdk::print("debug");
+
     let stage2_result : Result<String, Box<EvalAltResult>>   =  engine.eval_with_scope::<String>(&mut scope ,&stage2_string);
     for command in stage2_commands.borrow().iter() {
         match command.command_type {
@@ -147,12 +149,13 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
             },
             CommandType::ERC20_TOKEN_TRANSFER_FROM => {
                 let parts: Vec<&str> = command.args.split(',').collect();
-                let result = send_erc20_token_from(parts[0].parse().unwrap(), parts[1].parse().unwrap(), parts[2].parse().unwrap(), parts[3].parse::<u64>().unwrap(), parts[4].parse().unwrap()).await.unwrap();
+                ic_cdk::print(parts[3]);
+                let result = send_erc20_token_from(parts[0].to_string(), parts[1].to_string(), parts[2].to_string(), parts[3].trim().parse().unwrap(), parts[4].to_string()).await.unwrap();
             }
         }
     }
 
-    return  stage2_result.unwrap().to_string();
+    return  stage2_result.err().unwrap().to_string();
 
 }
 

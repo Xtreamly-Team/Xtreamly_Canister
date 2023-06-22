@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use base64::decode;
+use base64::{decode, Engine};
 use candid::candid_method;
 use hex::encode;
 use ic_cdk::{api, export::serde};
@@ -75,8 +75,10 @@ pub async fn erc20_token_balance(contract_addr: String, addr: String) -> Result<
 // call a contract, transfer some token to addr
 #[update(name = "send_erc20_token_from")]
 #[candid_method(update, rename = "send_erc20_token_from")]
-pub async fn send_erc20_token_from(token_addr: String, from: String, to: String, value: u64, key_holder: String) -> Result<String, String> {
-    let decoded_json =  String::from_utf8(base64::decode(key_holder).unwrap()).unwrap();
+pub async fn send_erc20_token_from(token_addr: String, from_address: String, to: String, value: i64, key_holder: String) -> Result<String, String> {
+    ic_cdk::print((key_holder.clone()));
+    let  xx = base64::decode(key_holder.trim()).unwrap();
+    let decoded_json =  String::from_utf8(xx).unwrap();
     let key_holder_result: KeyHolder = serde_json::from_str(&decoded_json).unwrap();
 
     let derivation_path = key_holder_result.derive;
@@ -92,8 +94,8 @@ pub async fn send_erc20_token_from(token_addr: String, from: String, to: String,
         contract_address,
         ERC20_TOKEN_ABI,
     ).map_err(|e| format!("init contract failed: "))?;
-
-    let from = Address::from_str(&from).unwrap();
+    let from_fixed = from_address.replace("0x", "");
+    let from = Address::from_str(&from_fixed).unwrap();
     // add nonce to options
     let tx_count = w3.eth()
         .transaction_count(from, None)
@@ -110,7 +112,8 @@ pub async fn send_erc20_token_from(token_addr: String, from: String, to: String,
         op.gas_price = Some(gas_price);
         op.transaction_type = Some(U64::from(2)) //EIP1559_TX_ID
     });
-    let to_addr = Address::from_str(&to).unwrap();
+    let to_fix = to.replace("0x", "");
+    let to_addr = Address::from_str(&to_fix).unwrap();
     let txhash = contract
         .signed_call("transferFrom", (from, to_addr, value, ), options,  key_holder_result.proxy_publickey , key_info, CHAIN_ID)
         .await
