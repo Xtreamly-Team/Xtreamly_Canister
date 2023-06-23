@@ -155,7 +155,7 @@ pub async fn execute_script(token: String , stage1_script : String, stage2_strin
         }
     }
 
-    return  stage2_result.err().unwrap().to_string();
+    return  stage2_result.unwrap();
 
 }
 

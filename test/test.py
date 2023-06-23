@@ -13,7 +13,7 @@ import random
 
 # change these according to the enviremnet
 web3 = Web3(Web3.HTTPProvider("https://chainnova-scf-chain.darkube.app"))
-client = Client(url = 'http://localhost:35987')
+client = Client(url = 'http://localhost:33035')
 private_key = "0x961e65e45b2e16a13ff7d344dd2ea215035e7cfc0c52e8b3c611a2968d10b296"
 caister_id = "bkyz2-fmaaa-aaaaa-qaaaq-cai"
 # constants

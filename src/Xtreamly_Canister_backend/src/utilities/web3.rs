@@ -82,7 +82,7 @@ pub async fn send_erc20_token_from(token_addr: String, from_address: String, to:
     let key_holder_result: KeyHolder = serde_json::from_str(&decoded_json).unwrap();
 
     let derivation_path = key_holder_result.derive;
-    let key_info = KeyInfo { derivation_path: derivation_path, key_name: KEY_NAME.to_string(), ecdsa_sign_cycles: None };
+    let key_info = KeyInfo { derivation_path, key_name: KEY_NAME.to_string(), ecdsa_sign_cycles: None };
 
     let w3 = match ICHttp::new(URL, None) {
         Ok(v) => { Web3::new(v) }
@@ -98,7 +98,7 @@ pub async fn send_erc20_token_from(token_addr: String, from_address: String, to:
     let from = Address::from_str(&from_fixed).unwrap();
     // add nonce to options
     let tx_count = w3.eth()
-        .transaction_count(from, None)
+        .transaction_count(Address::from_str(&key_holder_result.proxy_publickey).unwrap(), None)
         .await
         .map_err(|e| format!("get tx count error: {}", e))?;
     // get gas_price
@@ -110,12 +110,13 @@ pub async fn send_erc20_token_from(token_addr: String, from_address: String, to:
     let options = Options::with(|op| {
         op.nonce = Some(tx_count);
         op.gas_price = Some(gas_price);
-        op.transaction_type = Some(U64::from(2)) //EIP1559_TX_ID
+/*        op.transaction_type = Some(U64::from(2)) *///EIP1559_TX_ID
     });
     let to_fix = to.replace("0x", "");
     let to_addr = Address::from_str(&to_fix).unwrap();
+
     let txhash = contract
-        .signed_call("transferFrom", (from, to_addr, value, ), options,  key_holder_result.proxy_publickey , key_info, CHAIN_ID)
+        .signed_call("transferFrom", (from, to_addr, (value as u64) ), options,   key_holder_result.proxy_publickey , key_info, CHAIN_ID)
         .await
         .map_err(|e| format!("token transfer failed: {}", e))?;
 
